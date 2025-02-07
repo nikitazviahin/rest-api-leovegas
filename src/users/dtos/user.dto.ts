@@ -1,11 +1,11 @@
 import { IsEmail, IsEnum, IsMongoId, IsString } from 'class-validator';
-import { Types } from 'mongoose';
 import { UserRole } from '../../common/enums/user-role.enum';
 import { IUser } from '../interfaces/user.interface';
+import { ObjectId } from '../../common/types/object-id.type';
 
 export class UserDto implements IUser {
   @IsMongoId()
-  _id: Types.ObjectId;
+  _id: ObjectId;
 
   @IsString()
   name: string;
