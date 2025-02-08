@@ -7,10 +7,20 @@ import { JsonApiErrorResponseDto } from '../common/dtos/json-api-error.dto';
 import { JsonApiGetUserDetailsDto, UserDto } from './dtos/user.dto';
 import { RequestUser } from '../common/decorators/request-user.decorator';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { JsonApiGetAllUsersDetailsDto } from './dtos/get-users.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Get()
+  async getAllUsers(): Promise<
+    JsonApiGetAllUsersDetailsDto | JsonApiErrorResponseDto
+  > {
+    return this.usersService.getAllUsers();
+  }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('USER', 'ADMIN')

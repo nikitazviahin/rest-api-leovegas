@@ -7,6 +7,7 @@ import { JsonApiGetUserDetailsDto, UserDto } from './dtos/user.dto';
 import { ObjectId } from '../common/types/object-id.type';
 import { JsonApiErrorResponseDto } from '../common/dtos/json-api-error.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { JsonApiGetAllUsersDetailsDto } from './dtos/get-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -138,6 +139,26 @@ export class UsersService {
           access_token: user.access_token,
         },
       },
+    };
+  }
+
+  async getAllUsers(): Promise<
+    JsonApiGetAllUsersDetailsDto | JsonApiErrorResponseDto
+  > {
+    const users = await this.userModel.find().select('-password');
+
+    return {
+      data: users.map((user) => ({
+        type: 'users',
+        id: user._id.toString(),
+        attributes: {
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          access_token: user.access_token,
+        },
+      })),
     };
   }
 }

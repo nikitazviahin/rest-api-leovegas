@@ -27,7 +27,7 @@ export class JwtAuthGuard implements CanActivate {
     const token = authHeader.split(' ')[1];
     const decodedToken = this.jwtService.verify(token);
 
-    const storedUser = await this.usersService.getUserById(decodedToken.id);
+    const storedUser = await this.usersService.getUserById(decodedToken._id);
     if (!storedUser) {
       throw new UnauthorizedException('User not found');
     }
@@ -41,7 +41,7 @@ export class JwtAuthGuard implements CanActivate {
         secret: this.configService.get<string>('JWT_SECRET'),
       });
 
-      request['user'] = { ...payload, _id: payload.id, access_token: token };
+      request['user'] = { ...payload, _id: payload._id, access_token: token };
 
       return true;
     } catch (error) {

@@ -17,7 +17,7 @@ export class JsonApiDataDto<T> extends JsonApiMetaDto {
 }
 
 export class JsonApiResponseDto<T> extends JsonApiMetaDto {
-  data: JsonApiDataDto<T>;
+  data: JsonApiDataDto<T> | JsonApiDataDto<T>[];
 
   links?: JsonApiLinksDto;
 }
