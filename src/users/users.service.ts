@@ -6,6 +6,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { JsonApiGetUserDetailsDto, UserDto } from './dtos/user.dto';
 import { ObjectId } from '../common/types/object-id.type';
 import { JsonApiErrorResponseDto } from '../common/dtos/json-api-error.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -82,6 +83,57 @@ export class UsersService {
           _id: user._id,
           email: user.email,
           name: user.name,
+          role: user.role,
+          access_token: user.access_token,
+        },
+      },
+    };
+  }
+
+  async updateUserDetails(
+    userId: string,
+    dto: UpdateUserDto,
+    requestUser: UserDto,
+  ): Promise<JsonApiGetUserDetailsDto | JsonApiErrorResponseDto> {
+    const user = await this.userModel.findById(userId);
+
+    if (user._id.toString() !== requestUser._id.toString()) {
+      return {
+        errors: [
+          {
+            status: '403',
+            title: 'Forbidden',
+            detail: 'No permission to update the resource',
+          },
+        ],
+      };
+    }
+
+    if (!user) {
+      return {
+        errors: [
+          {
+            status: '404',
+            title: 'Not Found',
+            detail: 'User not found',
+          },
+        ],
+      };
+    }
+
+    if (dto.name) user.name = dto.name;
+    if (dto.email) user.email = dto.email;
+
+    await user.save();
+
+    return {
+      data: {
+        type: 'users',
+        id: user._id.toString(),
+        attributes: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
           role: user.role,
           access_token: user.access_token,
         },
